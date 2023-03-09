@@ -1,20 +1,29 @@
-export default function orderByProps(obj, arr) {
-  const firstArr = [];
-  const secondArr = [];
-  const objKeys = Object.keys(obj);
-  for (const key of objKeys) {
-    const secondObj = { key, value: obj[key] };
-    arr.forEach((el) => {
-      if (el === key) {
-        const firstObj = { key, value: obj[key] };
-        firstArr.push(firstObj);
-      }
-    });
-    if (!arr.includes(key)) {
-      secondArr.push(secondObj);
+export default function orderByProps(obj, props) {
+  const result = [];
+  for (const key in obj) {
+    if (obj.hasOwnProperty.call(obj, key)) {
+      result.push({ key, value: obj[key] });
     }
   }
-  secondArr.sort((a, b) => b.value - a.value);
 
-  return [...firstArr, ...secondArr];
+  const max = props.length;
+  result.sort((a, b) => {
+    let aOrder = props.indexOf(a.key);
+    if (aOrder < 0) {
+      aOrder = max;
+    }
+    let bOrder = props.indexOf(b.key);
+    if (bOrder < 0) {
+      bOrder = max;
+    }
+    if (aOrder !== bOrder) {
+      return aOrder - bOrder;
+    }
+    if (a.key > b.key) {
+      return 1;
+    }
+    return -1;
+  });
+
+  return result;
 }
